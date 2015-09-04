@@ -1,26 +1,26 @@
 'use strict';
 let cli = require('heroku-cli-util');
 var https = require('https')
+var http = require('http')
 var fs = require('fs')
 var socks = require('socksv5'),
     Client = require('ssh2').Client;
 
 module.exports = {
-  topic: 'ports',
-  command: 'open',
+  topic: 'jmx',
+  command: 'jconsole',
   description: 'snagglepuss',
-  help: 'Usage: heroku jmx:jconsole [dyno]:[port]',
-  args: [ {name: 'dyno_port'} ],
+  help: 'Usage: heroku jmx:jconsole [dyno]',
+  args: [ {name: 'dyno'} ],
   needsApp: true,
   needsAuth: true,
   run: cli.command(function (context, heroku) {
     heroku.apps(context.app).info(function (err, app) {
       if (err) { throw err; }
-      var dyno = context.args.dyno_port.split(':')[0]
-      var port = context.args.dyno_port.split(':')[1]
-      var path = `/reservation?id=${app.id}&dyno=${dyno}&port=${port}`
+      var dyno = context.args.dyno
+      var path = `/reservation?id=${app.id}&dyno=${dyno}&port=2222`
       console.log('PATH: ' + path)
-      var req = https.request({
+      var req = http.request({
         host: 'mighty-ridge-8684.herokuapp.com',
         auth: 'heroku:snagglepuss',
         path: path,
@@ -32,24 +32,26 @@ module.exports = {
             body += chunk;
         });
         res.on('end', function() {
-            //body = JSON.parse(body);
+            var json = JSON.parse(body);
             console.log(body)
 
             // TODO download the key
 
-            var tunnelUserAndHost = body.split(':')[0]
-            var tunnelUser = body.split('@')[0]
-            var tunnelHost = body.split(':')[0]
-            var tunnelPort = body.split(':')[1]
+            // var tunnelUserAndHost = body.split(':')[0]
+            // var tunnelUser = body.split('@')[0]
+            // var tunnelHost = body.split(':')[0]
+            // var tunnelPort = body.split(':')[1]
 
-            console.log('HOST: ' + tunnelHost)
-            console.log('PORT: ' + tunnelPort)
+            console.log('HOST: ' + json['tunnel_host'])
+            console.log('PORT: ' + json['tunnel_port'])
             socksv5({
-              host: tunnelHost,
-              port: tunnelPort,
-              username: tunnelUser,
+              host: json['tunnel_host'],
+              port: json['tunnel_port'],
+              username: json['dyno_user'],
               privateKey: fs.readFileSync('/Users/jkutner/.ssh/heroku_id_rsa')
             })
+
+            // TODO launch jconsole with socks config
         })
       }).on('error', function(e) {
         console.log("Got error: " + e.message);
