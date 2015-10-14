@@ -21,10 +21,10 @@ module.exports = {
       if (err) { throw err; }
       var dyno = context.args.dyno
       var path = `/reservation?id=${app.id}&dyno=${dyno}&port=2222`
-      console.log('PATH: ' + path)
+      cli.hush('PATH: ' + path)
       var req = http.request({
-        host: 'mighty-ridge-8684.herokuapp.com',
-        auth: '',
+        host: process.env.HEROKU_PROXY_HOST,
+        auth: process.env.HEROKU_PROXY_AUTH,
         path: path,
         method: 'GET'
       }, function(res) {
@@ -35,13 +35,13 @@ module.exports = {
         });
         res.on('end', function() {
             var json = JSON.parse(body);
-            cli.debug(body)
+            cli.hush(body)
 
             // TODO download the key
             var key = downloadPrivateKey(context.herokuDir)
 
-            cli.debug('HOST: ' + json['tunnel_host'])
-            cli.debug('PORT: ' + json['tunnel_port'])
+            cli.hush('HOST: ' + json['tunnel_host'])
+            cli.hush('PORT: ' + json['tunnel_port'])
 
             socksv5({
               host: json['tunnel_host'],
