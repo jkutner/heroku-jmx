@@ -1,4 +1,6 @@
 'use strict';
+var child = require('child_process');
+var path = require('path');
 let cli = require('heroku-cli-util');
 var https = require('https')
 var http = require('http')
@@ -22,7 +24,7 @@ module.exports = {
       console.log('PATH: ' + path)
       var req = http.request({
         host: 'mighty-ridge-8684.herokuapp.com',
-        auth: 'heroku:snagglepuss',
+        auth: '',
         path: path,
         method: 'GET'
       }, function(res) {
@@ -33,25 +35,23 @@ module.exports = {
         });
         res.on('end', function() {
             var json = JSON.parse(body);
-            console.log(body)
+            cli.debug(body)
 
             // TODO download the key
+            var key = downloadPrivateKey(context.herokuDir)
 
-            // var tunnelUserAndHost = body.split(':')[0]
-            // var tunnelUser = body.split('@')[0]
-            // var tunnelHost = body.split(':')[0]
-            // var tunnelPort = body.split(':')[1]
+            cli.debug('HOST: ' + json['tunnel_host'])
+            cli.debug('PORT: ' + json['tunnel_port'])
 
-            console.log('HOST: ' + json['tunnel_host'])
-            console.log('PORT: ' + json['tunnel_port'])
             socksv5({
               host: json['tunnel_host'],
               port: json['tunnel_port'],
               username: json['dyno_user'],
-              privateKey: fs.readFileSync('/Users/jkutner/.ssh/heroku_id_rsa')
+              privateKey: key
             })
 
-            // TODO launch jconsole with socks config
+            console.log("Launching JConsole...")
+            child.exec(`jconsole -J-DsocksProxyHost=localhost -J-DsocksProxyPort=1080 ${json['dyno_ip']}:1098`)
         })
       }).on('error', function(e) {
         console.log("Got error: " + e.message);
@@ -92,4 +92,9 @@ function socksv5(ssh_config) {
   }).listen(1080, 'localhost', function() {
     console.log('SOCKSv5 proxy server started on port 1080');
   }).useAuth(socks.auth.None());
+}
+
+function downloadPrivateKey(herokuDir) {
+    cli.log('Downloading private key...')
+    return child.execSync('heroku run cat /app/.ssh/id_rsa')
 }
