@@ -15,7 +15,7 @@ module.exports = {
     child.execSync('heroku buildpacks:add -i 1 https://codon-buildpacks.s3.amazonaws.com/buildpacks/jkutner/jmx.tgz -a ' + context.app)
 
     console.log('Setting config vars...')
-      child.execSync(`heroku config:set HEROKU_PROXY_URL=\"https:\/\/${process.env.HEROKU_PROXY_AUTH}@${process.env.HEROKU_PROXY_HOST}\" -a ${context.app}`)
+    child.execSync(`heroku config:set HEROKU_PROXY_URL=\"https:\/\/${process.env.HEROKU_PROXY_AUTH}@${process.env.HEROKU_PROXY_HOST}\" -a ${context.app}`)
 
     console.log('Done.')
   })
