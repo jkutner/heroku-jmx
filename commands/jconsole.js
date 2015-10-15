@@ -11,7 +11,7 @@ var socks = require('socksv5'),
 module.exports = {
   topic: 'jmx',
   command: 'jconsole',
-  description: 'snagglepuss',
+  description: 'Launch JConsole into an app',
   help: 'Usage: heroku jmx:jconsole [dyno]',
   args: [ {name: 'dyno'} ],
   needsApp: true,
@@ -38,7 +38,7 @@ module.exports = {
             cli.hush(body)
 
             // TODO download the key
-            var key = downloadPrivateKey(context.herokuDir)
+            var key = downloadPrivateKey(context.app, context.herokuDir)
 
             cli.hush('HOST: ' + json['tunnel_host'])
             cli.hush('PORT: ' + json['tunnel_port'])
@@ -94,7 +94,7 @@ function socksv5(ssh_config) {
   }).useAuth(socks.auth.None());
 }
 
-function downloadPrivateKey(herokuDir) {
+function downloadPrivateKey(app, herokuDir) {
     cli.log('Downloading private key...')
-    return child.execSync('heroku run cat /app/.ssh/id_rsa')
+    return child.execSync('heroku run cat /app/.ssh/id_rsa -a ' + app)
 }

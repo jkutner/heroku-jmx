@@ -5,5 +5,6 @@ exports.topic = {
 };
 
 exports.commands = [
-  require('./commands/jconsole.js')
+  require('./commands/jconsole.js'),
+  require('./commands/init.js')
 ];
