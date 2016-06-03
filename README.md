@@ -2,7 +2,7 @@
 
 ## Usage
 
-Initialize your app (you'll need your ngrok key):
+Initialize your app (you'll need your [ngrok](https://ngrok.com) key):
 
 ```
 $ heroku jmx:init
@@ -19,13 +19,15 @@ Look through your logs for this:
 ```
 $ heroku logs -t
 ...
-2016-06-... app[web.1]: Starting sshd for u123@172.0.0.1
+2016-06...app[web.1]: Start JConsole: heroku jmx:jconsole u26027@172.17.103.234 0.tcp.ngrok.io:13379
 ```
 
-Then use the <user>@<ip> value for this command:
+Then run that command:
 
 ```
-$ heroku jmx:jconsole user123@172.0.0.1 0.tcp.ngrok.io:17152
+$ heroku jmx:jconsole u26027@172.17.103.234 0.tcp.ngrok.io:13379
 ```
 
-JConsole will open. To use VisualVM, you'll have to set the VisualVM SOCKS proxy manually.
+JConsole will open and information that it is an insecure connection (but it's actually secured via SSH).
+
+To use VisualVM, leave the `jmx:jconsole` command running. Then set the VisualVM SOCKS proxy manually to `localhost:1080`.
