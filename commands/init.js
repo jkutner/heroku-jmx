@@ -23,7 +23,7 @@ function * run(context, heroku) {
     child.execSync('heroku buildpacks:add -i 1 https://codon-buildpacks.s3.amazonaws.com/buildpacks/jkutner/jmx.tgz -a ' + context.app)
 
     console.log('Setting config vars...')
-    child.execSync(`heroku config:set NGROK_API_KEY=\"${ngrokKey}\" -a ${context.app}`)
+    child.execSync(`heroku config:set NGROK_API_TOKEN=\"${ngrokKey}\" -a ${context.app}`)
     child.execSync(`heroku config:set JMX_ENABLED=\"true\" -a ${context.app}`)
 
     console.log('Done.')
