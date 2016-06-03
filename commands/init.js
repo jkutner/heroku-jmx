@@ -16,7 +16,7 @@ module.exports = {
 }
 
 function * run(context, heroku) {
-  var ngrokKey = yield cli.prompt('ngrok API key')
+  var ngrokKey = yield cli.prompt('ngrok API token')
 
   heroku.apps(context.app).info(function (err, app) {
     console.log('Setting JMX buildpack...')
