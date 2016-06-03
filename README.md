@@ -1,4 +1,4 @@
-# Heroku Toolbelt Plugin for JMX
+# Heroku CLI Plugin for JMX
 
 ![JMX Demo](demo.gif)
 
