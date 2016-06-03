@@ -1,5 +1,7 @@
 # Heroku Toolbelt Plugin for JMX
 
+![JMX Demo](demo.gif)
+
 ## Usage
 
 Initialize your app (you'll need your [ngrok](https://ngrok.com) key):
