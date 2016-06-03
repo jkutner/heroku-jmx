@@ -16,16 +16,25 @@ module.exports = {
 }
 
 function * run(context, heroku) {
-  var ngrokKey = yield cli.prompt('ngrok API token')
+  var ngrokKey = yield cli.prompt('ngrok auth token', {hide: true})
 
-  heroku.apps(context.app).info(function (err, app) {
-    console.log('Setting JMX buildpack...')
-    child.execSync('heroku buildpacks:add -i 1 https://codon-buildpacks.s3.amazonaws.com/buildpacks/jkutner/jmx.tgz -a ' + context.app)
+  let buildpacks = yield heroku.request({
+    path: `/apps/${context.app}/buildpack-installations`,
+    headers: {Range: ''}
+  });
 
-    console.log('Setting config vars...')
-    child.execSync(`heroku config:set NGROK_API_TOKEN=\"${ngrokKey}\" -a ${context.app}`)
-    child.execSync(`heroku config:set JMX_ENABLED=\"true\" -a ${context.app}`)
+  if (buildpacks.length === 0) {
+    cli.log(`${context.app} has no Buildpack URL set. You must deploy your application first!`);
+  } else {
+    heroku.apps(context.app).info(function (err, app) {
+      console.log('Setting JMX buildpack...')
+      child.execSync('heroku buildpacks:add -i 1 https://github.com/jkutner/heroku-buildpack-jmx -a ' + context.app)
 
-    console.log('Done.')
-  })
+      console.log('Setting config vars...')
+      child.execSync(`heroku config:set NGROK_API_TOKEN=\"${ngrokKey}\" -a ${context.app}`)
+      child.execSync(`heroku config:set JMX_ENABLED=\"true\" -a ${context.app}`)
+
+      console.log('Done.')
+    })
+  }
 }

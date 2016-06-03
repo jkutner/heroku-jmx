@@ -10,7 +10,7 @@ $ heroku plugins:install heroku-jmx
 
 ## Usage
 
-Initialize your app (you'll need your [ngrok](https://ngrok.com) key):
+Initialize your app (you'll need your [ngrok](https://ngrok.com) auth token):
 
 ```
 $ heroku jmx:init
