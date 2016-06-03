@@ -1,5 +1,7 @@
 # Heroku CLI Plugin for JMX
 
+Uses [ngrok](https://ngrok.com) to tunnel a JMX connection into a dyno.
+
 ```
 $ heroku plugins:install heroku-jmx
 ```
