@@ -1,12 +1,12 @@
 {
   "name": "heroku-jmx",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Heroku JMX tool",
   "main": "index.js",
   "author": "Joe Kutner",
-  "repository": "heroku/heroku-jmx",
+  "repository": "jkutner/heroku-jmx",
   "bugs": {
-    "url": "https://github.com/heroku/heroku-jmx/issues"
+    "url": "https://github.com/jkutner/heroku-jmx/issues"
   },
   "keywords": [
     "heroku-plugin"
