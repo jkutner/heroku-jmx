@@ -27,14 +27,20 @@ function * run(context, heroku) {
     cli.log(`${context.app} has no Buildpack URL set. You must deploy your application first!`);
   } else {
     heroku.apps(context.app).info(function (err, app) {
-      console.log('Setting JMX buildpack...')
-      child.execSync('heroku buildpacks:add -i 1 https://github.com/jkutner/heroku-buildpack-jmx -a ' + context.app)
+      var jmxBuildpack = "https://github.com/jkutner/heroku-buildpack-jmx"
+      var firstBuildpack = buildpacks[0]['buildpack']['url']
+
+      if (firstBuildpack != jmxBuildpack) {
+        console.log('Setting JMX buildpack...')
+        child.execSync(`heroku buildpacks:add -i 1 ${jmxBuildpack} -a ${context.app}`)
+      }
 
       console.log('Setting config vars...')
       child.execSync(`heroku config:set NGROK_API_TOKEN=\"${ngrokKey}\" -a ${context.app}`)
       child.execSync(`heroku config:set JMX_ENABLED=\"true\" -a ${context.app}`)
 
-      console.log('Done.')
+      console.log('')
+      console.log('Run `heroku logs` to find the "JConsole Command". Then run that command.')
     })
   }
 }
