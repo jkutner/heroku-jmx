@@ -1,5 +1,9 @@
 # Heroku CLI Plugin for JMX
 
+```
+$ heroku plugins:install heroku-jmx
+```
+
 ![JMX Demo](demo.gif)
 
 ## Usage
